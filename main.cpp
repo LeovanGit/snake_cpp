@@ -58,14 +58,20 @@ void reset_game()
   spawn_apple();
 }
 
+void end_game()
+{
+  game_over = true;
+  {
+    mvprintw(height/2-2, width/2-4, "THE END");
+    mvprintw(height/2-1, width/2-4, "Score: %d\n", score);
+    mvprintw(height/2, width/2-9, "Press F to restart");
+  }
+}
+
 void grow_snake()
 {
-  int s = snake.body.size();
-  int x = snake.body[s-1][0];
-  int y = snake.body[s-1][1] + 1;
-  vector <int> new_body_coord = {x, y};
+  vector <int> new_body_coord = {height+1, width+1};
   snake.body.push_back(new_body_coord);
-//  mvaddch(y, x, snake.skin);
 }
 
 void check_apple_collision()
@@ -126,39 +132,48 @@ void move_snake()
         break;
   }
 
+  // рисуем голову
   if (mvinch(snake.body[0][1], snake.body[0][0]) == snake.skin ||
       snake.body[0][0] < 0 || snake.body[0][0] > width-1 ||
       snake.body[0][1] < 0 || snake.body[0][1] > height-1)
   {
-    game_over = true;
+    end_game();
     mvaddch(prev_head_y, prev_head_x, 'X');
   }
-  else mvaddch(snake.body[0][1], snake.body[0][0], snake.skin); // рисуем голову
+  else mvaddch(snake.body[0][1], snake.body[0][0], snake.skin);
 }
 
 int main()
 {
+    rest:
     initscr();
+    clear();
     curs_set(0); // скрыть курсор
     noecho(); // не показывать ввод в терминале
     timeout(0); // getch() не перехватывает управление
     getmaxyx(stdscr, height, width);
-    reset_game();
 
-    for (int i = 0; i < 10; i++) // 3
+    reset_game();
+    for (int i = 0; i < 3; i++) // 3
     {
       grow_snake();
     }
-
-
+    
     while (!game_over)
     {
-     check_apple_collision();
-     move_snake();
-     napms(200);
-     change_direction();
+       check_apple_collision();
+       move_snake();
+       napms(200);
+       change_direction();
     }
-    napms(10000);
+    napms(1000);
+    timeout(-1);
+    char res = getch();
+    if (res == 'f')
+    {
+      endwin();
+      goto rest;
+    }
 
     endwin();
     return 0;
