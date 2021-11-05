@@ -32,15 +32,19 @@ Apple apple;
 
 void spawn_apple()
 {
-  apple.x = rand() % width;
-  apple.y = rand() % height;
+  while(true)
+  {
+    apple.x = rand() % width;
+    apple.y = rand() % height;
+    if (mvinch(apple.y, apple.x) == ' ') break;
+  }
   mvaddch(apple.y, apple.x, apple.skin);
 }
 
 void draw_score()
 {
   move(0,0);
-  printw("Score: %d", score);
+  printw("SCORE: %d", score);
 }
 
 void reset_game()
@@ -50,7 +54,7 @@ void reset_game()
   snake.body.clear();
   vector <int> start_coord = {width / 2, height / 2}; // (x;y)
   snake.body.push_back(start_coord);
-  mvaddch(snake.body[0][1], snake.body[0][0], snake.skin);
+  mvaddch(snake.body[0][1], snake.body[0][0], snake.skin); // под вопросом
   spawn_apple();
 }
 
@@ -98,6 +102,9 @@ void move_snake()
       mvaddch(snake.body[i][1], snake.body[i][0], snake.skin);
   }
 
+  int prev_head_x = snake.body[0][0];
+  int prev_head_y = snake.body[0][1];
+
   // меняем координаты головы
   switch(snake.way)
   {
@@ -115,7 +122,14 @@ void move_snake()
         break;
   }
 
-  mvaddch(snake.body[0][1], snake.body[0][0], snake.skin); // рисуем голову
+  if (mvinch(snake.body[0][1], snake.body[0][0]) == snake.skin ||
+      snake.body[0][0] < 0 || snake.body[0][0] > width-1 ||
+      snake.body[0][1] < 0 || snake.body[0][1] > height-1)
+  {
+    game_over = true;
+    mvaddch(prev_head_y, prev_head_x, 'X');
+  }
+  else mvaddch(snake.body[0][1], snake.body[0][0], snake.skin); // рисуем голову
 }
 
 int main()
@@ -127,18 +141,20 @@ int main()
     getmaxyx(stdscr, height, width);
     reset_game();
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++) // 3
     {
       grow_snake();
     }
 
+
     while (!game_over)
     {
-      check_apple_collision();
-      move_snake();
-      napms(250);
-      change_direction();
+     check_apple_collision();
+     move_snake();
+     napms(200);
+     change_direction();
     }
+    napms(10000);
 
     endwin();
     return 0;
