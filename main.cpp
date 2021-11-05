@@ -83,7 +83,11 @@ void change_direction()
 {
   char new_way = '\0';
   new_way = getch();
-  if (new_way == 'w' || new_way == 'a' || new_way == 's' || new_way == 'd') 
+
+  if ((new_way == 'w' && snake.way != 's') || 
+      (new_way == 'a' && snake.way != 'd') ||
+      (new_way == 's' && snake.way != 'w') ||
+      (new_way == 'd' && snake.way != 'a')) 
   snake.way = new_way;
 }
 
