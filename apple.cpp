@@ -11,6 +11,7 @@ struct Apple
   int x = -1;
   int y = -1;
   char skin = '@';
+  int color = 1;
 };
 
 Apple apple;
@@ -24,13 +25,16 @@ void spawn_apple(int width, int height)
     Если координаты яблока совпадут с координатами
     змейки - перегенерировать координаты
   */
+  apple.color = rand() % 3 + 1; // YELLOW, RED, GREEN, +1 что бы не было 0
   while(true)
   {
     apple.x = rand() % width;
     apple.y = rand() % height;
     if (mvinch(apple.y, apple.x) == ' ') break;
   }
+  attron(COLOR_PAIR(apple.color));
   mvaddch(apple.y, apple.x, apple.skin); // перенести в логику
+  attroff(COLOR_PAIR(apple.color));
 }
 
 void check_apple_collision(int head_x, int head_y)
