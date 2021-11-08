@@ -50,13 +50,27 @@ void change_direction()
      например змейка ползет 'w', при нажатии 's' ничего не произойдет,
      поскольку, змея не может ползти сама в себя.
    */
-  char new_way = getch();
+  chtype new_way = getch();
 
-  if ((new_way == 'w' && snake.way != 's') || 
-      (new_way == 'a' && snake.way != 'd') ||
-      (new_way == 's' && snake.way != 'w') ||
-      (new_way == 'd' && snake.way != 'a')) 
-  snake.way = new_way;
+  if ((new_way == 'w' ||
+       new_way == 'W' ||
+       new_way == KEY_UP) &&
+       snake.way != 's') snake.way = 'w';
+
+  else if ((new_way == 'a' ||
+            new_way == 'A' ||
+            new_way == KEY_LEFT) &&
+            snake.way != 'd') snake.way = 'a';
+
+  else if ((new_way == 's' ||
+            new_way == 'S' ||
+            new_way == KEY_DOWN) &&
+            snake.way != 'w') snake.way = 's';
+
+  else if ((new_way == 'd' ||
+            new_way == 'D' ||
+            new_way == KEY_RIGHT) &&
+            snake.way != 'a') snake.way = 'd';
 }
 
 bool check_snake_collison(int head_x, int head_y)

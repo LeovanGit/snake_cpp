@@ -68,11 +68,12 @@ int main()
   {
     initscr();
     clear();
-    curs_set(0); // скрыть курсор
-    noecho(); // не показывать ввод в терминале
-    timeout(0); // getch() не перехватывает управление
+    curs_set(0);
+    noecho();
+    timeout(0);
     getmaxyx(stdscr, height, width);
-    
+    keypad(stdscr, true);
+
     init_colors();
     reset_game();
     
@@ -86,12 +87,13 @@ int main()
     
     draw_end();
 
-    timeout(-1); // getch() ожидает указания пользователя
+    timeout(-1);
 
-    do res = getch(); while (res != 'q' && res != 'f');
+    do res = getch(); while (res != 'q' && res != 'f' &&
+                             res != 'Q' && res != 'F');
 
     endwin();
-  } while(res == 'f');
+  } while(res == 'f' || res == 'F');
   
   return 0;
 }
